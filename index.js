@@ -2,11 +2,18 @@ const express = require('express');
 const ytdl = require('ytdl-core');
 const yts = require('yt-search');
 const fs = require('fs-extra');
+const path = require('path');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'home.html'));
+});
 
 app.get('/sing', async (req, res) => {
   try {
@@ -35,7 +42,7 @@ app.get('/sing', async (req, res) => {
           console.error('[ERROR]', err);
           res.status(500).send('Internal Server Error');
         }
-        // Remove the file after sending the response
+
         fs.unlink(filePath, (unlinkError) => {
           if (unlinkError) {
             console.error('[ERROR]', unlinkError);
@@ -56,5 +63,5 @@ app.get('/sing', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running at http://localhost: ${port}`);
+  console.log(`Server is running at http://localhost:${port}`);
 });
